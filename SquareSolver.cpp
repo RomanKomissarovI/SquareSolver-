@@ -1,42 +1,47 @@
 #include <stdio.h>
 #include <math.h>
 
-const int SS_INF_CASE = -1;
+const int SS_INF_CASE = -1; // Бесконечное количество корней
 
-
-int qvad(double a, double b, double c, double* x1, double* x2)
+int SquareSolver(double a, double b, double c, double* x1, double* x2)
 {
     if (a == 0){
         if (b == 0){
-            return (c == 0) ? -1: 0;
+            return (c == 0) ? SS_INF_CASE : 0;
         }
         *x1 = *x2 = -c / b;
         return 1;
     }
 
     double d = b * b - 4 * a * c;
-    if (d > 0){
-        *x1 = (-b - sqrt(d)) / 2 / a;
-        *x2 = (-b + sqrt(d)) / 2 / a;
-        return 2;
-    }
-    else if (d == 0){
-        *x1 = *x2 = (-b - sqrt(d)) / 2 / a;
-        return 1;
+    if (d < 0){
+        return 0;
     }
     else{
-        return 0;
+        double sqr_discr = sqrt(d);
+        if (d > 0){
+            *x1 = (-b - sqr_discr) / 2 / a;
+            *x2 = (-b + sqr_discr) / 2 / a;
+            return 2;
+        }
+        *x1 = *x2 = (-b - sqr_discr) / 2 / a; // d == 0
+        return 1;
     }
 }
 
 int main()
 {
     printf("Square Solver\nEnter the a, b, c:\n");
-    double a, b, c;
+
+    double a = 0;
+    double b = 0;
+    double c = 0;
+
     scanf("%lf %lf %lf", &a, &b, &c);
 
-    double x1 = 0, x2 = 0;
-    int nroot = qvad(a, b, c, &x1, &x2);
+    double x1 = 0;
+    double x2 = 0;
+    int nroot = SquareSolver(a, b, c, &x1, &x2);
 
     switch (nroot){
         case 0:
@@ -54,5 +59,6 @@ int main()
         default:
             printf("SS_main() Error");
     }
+
     return 0;
 }
