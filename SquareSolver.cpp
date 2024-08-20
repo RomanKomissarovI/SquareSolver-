@@ -2,7 +2,12 @@
 #include <math.h>
 #include <assert.h>
 
-const int SS_INF_CASE = -1; // Бесконечное количество корней
+//#define
+// #ifdef #if
+// macros?
+// #include
+// -E
+
 const double EPS = 10e-5; // погрешность
 
 struct coeffs {
@@ -12,78 +17,73 @@ struct coeffs {
 };
 
 enum RootsCount {
-    InfRoots = -1,
+    InfRoots = -1, // Бесконечное количество корней
     OneRoots = 1,
     TwoRoots = 2,
     ZeroRoots = 0,
-    NOT_SOLVE = -999,
+    NOT_SOLVE = -999, // ещё не решали
 };
 
 struct solution {
     double x1 = 0;
     double x2 = 0;
-    int nroot = NOT_SOLVE;
+    RootsCount nroot = NOT_SOLVE;
 };
 
-struct pair {
+struct equation { // equation
     struct coeffs c;
     struct solution s;
 };
 
-struct pair make_pair() {
-    struct pair p;
+struct equation make_equation() {
+    struct equation p;
     printf("Square Solver\nEnter the a, b, c:\n");
     scanf("%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
 
-    p.s.x1 = 0;
     return p;
 }
 
-int solve(struct coeffs c, struct solution* s) {// const struct coeffs* coeffs, struct solution* solution
-    //assert((s->x1) != NULL);
-    //assert(s->x2 != NULL);
-    //assert(s->x1 != s->x2);
+bool IsZero(double x) {
+    return fabs(x) <= EPS;
+}
 
-    if (fabs(c.a) <= EPS){
-        if (fabs(c.b) <= EPS) {
-            return (fabs(c.c) <= EPS) ? SS_INF_CASE : 0;
+RootsCount solve(struct coeffs c, struct solution* s) {// const struct coeffs* coeffs, struct solution* solution
+    if (IsZero(c.a)){
+        if (IsZero(c.b)) {
+            return (fabs(c.c) <= EPS) ? InfRoots : ZeroRoots;
         }
         s->x1 = s->x2 = -c.c / c.b;
-        return 1;
+        return OneRoots;
     }
 
     double d = c.b * c.b - 4 * c.a * c.c;
     if (d < 0){
-        return 0;
+        return ZeroRoots;
     }
     else{
         double sqr_discr = sqrt(d);
         if (d > EPS){
             s->x1 = (-c.b - sqr_discr) / 2 / c.a;
             s->x2 = (-c.b + sqr_discr) / 2 / c.a;
-            return 2;
+            return TwoRoots;
         }
         s->x1 = s->x2 = (-c.b - sqr_discr) / 2 / c.a; // d == 0
-        return 1;
+        return OneRoots;
     }
 }
 
-void output(struct coeffs c, struct solution* s) {
-    if (s->nroot == NOT_SOLVE) {
-        s->nroot = (RootsCount) solve(c, s);
-    }
-    int root = s->nroot;
-    switch (root){
-    case 0:
+void output(struct solution s) {
+    switch (s.nroot){
+    case ZeroRoots:
         printf("No roots\n");
         break;
-    case 1:
-        printf("One root: x = %lg\n", s->x1);
+    case OneRoots:
+        printf("One root: x = %lg\n", s.x1);
         break;
-    case 2:
-        printf("Two roots: x1 = %lg;  x2 = %lg\n", s->x1, s->x2);
+    case TwoRoots:
+        printf("Two roots: x1 = %lg;  x2 = %lg\n", s.x1, s.x2);
         break;
-    case SS_INF_CASE:
+    case InfRoots:
         printf("Infinity number of roots\n");
         break;
     default:
@@ -92,10 +92,12 @@ void output(struct coeffs c, struct solution* s) {
     }
 }
 
+// ./program arg1 arg2
 int main()
 {
-    pair Q;
-    Q = make_pair();
-    output(Q.c, &Q.s);
+    equation Q;
+    Q = make_equation();
+    Q.s.nroot = solve(Q.c, &Q.s);
+    output(Q.s);
     return 0;
 }
