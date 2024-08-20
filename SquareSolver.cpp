@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-
+#include <string.h>
 //#define
 // #ifdef #if
 // macros?
@@ -35,11 +35,38 @@ struct equation { // equation
     struct solution s;
 };
 
+void getline(char s[], int lim) {
+    int c, i;
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
+        s[i] = c;
+    }
+    if (c == 'n') {
+        s[i] = c;
+        ++i;
+    }
+    s[i] = '\0';
+}
+
 struct equation make_equation() {
     struct equation p;
-    printf("Square Solver\nEnter the a, b, c:\n");
-    scanf("%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
+    printf("Square Solver\n");
+    printf("If you want to use file input, write 1. Else, write 0\n");
+    char r = '0';
+    scanf("%c", &r);
+    if (r == '0') {
+        printf("Enter the a, b, c:\n");
+        scanf("%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
+    }
+    else if (r == '1') {
+        //printf("Write the path to the file (or it`s name, if the file in the directory of the programm)\n");
+        //char s[300];
+        //getline(s, 256);
+        //printf("%s\n\nqqqqq\n\n", s);
 
+        FILE* f = fopen("input.txt", "r");
+        fscanf(f, "%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
+        fclose(f);
+    }
     return p;
 }
 
