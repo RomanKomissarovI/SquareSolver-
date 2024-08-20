@@ -1,13 +1,25 @@
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
 const int SS_INF_CASE = -1; // Ѕесконечное количество корней
+const double EPS = 10e-5; // погрешность
+
+
+double abs(double a){
+    return (a >= 0) ? a : -a;
+}
+
 
 int SquareSolver(double a, double b, double c, double* x1, double* x2)
 {
-    if (a == 0){
-        if (b == 0){
-            return (c == 0) ? SS_INF_CASE : 0;
+    assert(x1 != NULL);
+    assert(x2 != NULL);
+    assert(x1 != x2);
+
+    if (abs(a) <= EPS){
+        if (abs(b) <= EPS){
+            return (abs(c) <= EPS) ? SS_INF_CASE : 0;
         }
         *x1 = *x2 = -c / b;
         return 1;
@@ -19,7 +31,7 @@ int SquareSolver(double a, double b, double c, double* x1, double* x2)
     }
     else{
         double sqr_discr = sqrt(d);
-        if (d > 0){
+        if (d > EPS){
             *x1 = (-b - sqr_discr) / 2 / a;
             *x2 = (-b + sqr_discr) / 2 / a;
             return 2;
