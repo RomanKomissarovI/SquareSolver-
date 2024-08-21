@@ -56,7 +56,7 @@ void get_file_name(char s[], int lim) {
     s[i] = '\0';
 }
 
-void flush_input() {
+void flush_input() {       // уничтожение символов до конца строки
     char c = '5';
     c = getchar();
     while (c != '\n' && c != EOF)
@@ -64,26 +64,22 @@ void flush_input() {
         printf("%c", c);
 }
 
-struct equation read_equation() {
+struct equation read_console_eq() {
     struct equation p;
-    printf("Square Solver\n");
-    printf("If you want to use file input, write 1. Else, write 0\n");
-    char r = '0';
-    scanf("%c", &r);
-    flush_input(); // flush_input() { while '\n'}
-    if (r == '0') {
-        printf("Enter the a, b, c:\n");      // ReadCoeffsInteractive
-        scanf("%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
-    }
-    else if (r == '1') {
-        printf("Write the path to the file (or it`s name, if the file in the directory of the programm)\n");
-        char s[300] = {0};
-        get_file_name(s, 256);
+    printf("Enter the a, b, c:\n");      // ReadCoeffsInteractive
+    scanf("%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
+    return p;
+}
 
-        FILE* f = fopen(s, "r");       // ReadCoeffsFile
-        fscanf(f, "%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
-        fclose(f);
-    }
+struct equation read_file_eq() {
+    struct equation p;
+    printf("Write the path to the file (or it`s name, if the file in the directory of the programm)\n");
+    char s[300] = {0};
+    get_file_name(s, 256);
+
+    FILE* f = fopen(s, "r");       // ReadCoeffsFile
+    fscanf(f, "%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
+    fclose(f);
     return p;
 }
 
@@ -186,7 +182,23 @@ void Total_Testing() {
 int main()
 {
     equation Q;
-    Q = read_equation(); // read_equation / input_coeffs
+    printf("Square Solver\n");
+    printf("If you want to use file input, write 1. Else, write 0\n");
+    char r = '0';
+    scanf("%c", &r);
+
+    switch(r) {
+        case '0':
+            Q = read_console_eq();
+            break;
+        case '1':
+            flush_input();
+            Q = read_file_eq();
+            break;
+        default:
+            printf("Error mode\n");
+            break;
+    }
     Q.s.nroot = solve_squar_eq(Q.c, &Q.s);
     output(Q.s);
     return 0;
