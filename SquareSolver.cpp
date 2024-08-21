@@ -20,7 +20,7 @@
 //#define DEBUG
 //$ ---> ;
 
-
+const int MAX_PATH_LEN = 257;
 const double EPS = 10e-5; // погрешность
 
 struct coeffs {
@@ -48,14 +48,6 @@ struct equation { // equation
     struct solution s;
 };
 
-void get_file_name(char s[], int lim) {
-    int c, i;
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
-        s[i] = (char)c;
-    }
-    s[i] = '\0';
-}
-
 void flush_input() {       // уничтожение символов до конца строки
     char c = '5';
     c = getchar();
@@ -64,6 +56,7 @@ void flush_input() {       // уничтожение символов до конца строки
         printf("%c", c);
 }
 
+// struct equation* eq
 struct equation read_console_eq() {
     struct equation p;
     printf("Enter the a, b, c:\n");      // ReadCoeffsInteractive
@@ -74,8 +67,8 @@ struct equation read_console_eq() {
 struct equation read_file_eq() {
     struct equation p;
     printf("Write the path to the file (or it`s name, if the file in the directory of the programm)\n");
-    char s[300] = {0};
-    get_file_name(s, 256);
+    char s[MAX_PATH_LEN];
+    scanf("%s", &s);
 
     FILE* f = fopen(s, "r");       // ReadCoeffsFile
     fscanf(f, "%lf %lf %lf", &p.c.a, &p.c.b, &p.c.c);
@@ -83,20 +76,20 @@ struct equation read_file_eq() {
     return p;
 }
 
-struct coeffs make_coeffs(double a, double b, double c) {
-    struct coeffs p;
-    p.a = a;
-    p.b = b;
-    p.c = c;
-    return p;
+// CoeffsCtor  constructor
+struct coeffs coeffs_ctor(coeffs* cf, double a, double b, double c) {
+    cf->a = a;
+    cf->b = b;
+    cf->c = c;
+    return *cf;
 }
 
-struct solution make_solution(double x1, double x2, RootsCount nroots) {
-    struct solution p;
-    p.x1 = x1;
-    p.x2 = x2;
-    p.nroot = nroots;
-    return p;
+// solution_ctor( solution* sol, double x1, double x2);
+struct solution solution_ctor(solution* sol, double x1, double x2, RootsCount nroots) {
+    sol->x1 = x1;
+    sol->x2 = x2;
+    sol->nroot = nroots;
+    return *sol;
 }
 
 bool IsZero(double x) {
@@ -148,7 +141,7 @@ void output(struct solution s) {
     }
 }
 
-int RunTest(int nTest, struct coeffs c, struct solution s_ok) {
+int runtest(int nTest, struct coeffs c, struct solution s_ok) {
     struct solution s;
     s.x1 = s.x2 = 0;
     s.nroot = solve_squar_eq(c, &s);
@@ -162,20 +155,27 @@ int RunTest(int nTest, struct coeffs c, struct solution s_ok) {
     return 0;
 }
 
-void Total_Testing() {
-    struct coeffs tests[] = {make_coeffs(0, 0, 0), make_coeffs(0, 0, 5),
-                               make_coeffs(0, 5, 0), make_coeffs(5, 0, 0),
-                               make_coeffs(2, 0, -8), make_coeffs(4, 8, 0),
-                               make_coeffs(0, 4, -8), make_coeffs(1, 1, 1),
-                               make_coeffs(1, 2, 1), make_coeffs(4, 8, 4)};
-    struct solution s_ok[] = {make_solution(0, 0, InfRoots), make_solution(0, 0, ZeroRoots),
-                              make_solution(0, 0, OneRoots), make_solution(0, 0, OneRoots),
-                              make_solution(-2, 2, TwoRoots), make_solution(-2, 0, TwoRoots),
-                              make_solution(2, 2, OneRoots), make_solution(0, 0, ZeroRoots),
-                              make_solution(-1, -1, OneRoots), make_solution(-1, -1, OneRoots)};
+void total_testing() {
+    struct coeffs cf;
+    struct coeffs tests[] = {coeffs_ctor(&cf, 0, 0, 0), coeffs_ctor(&cf, 0, 0, 5),
+                               coeffs_ctor(&cf, 0, 5, 0), coeffs_ctor(&cf, 5, 0, 0),
+                               coeffs_ctor(&cf, 2, 0, -8), coeffs_ctor(&cf, 4, 8, 0),
+                               coeffs_ctor(&cf, 0, 4, -8), coeffs_ctor(&cf, 1, 1, 1),
+                               coeffs_ctor(&cf, 1, 2, 1), coeffs_ctor(&cf, 4, 8, 4)};
+    struct solution sol;
+    struct solution s_ok[] = {solution_ctor(&sol, 0, 0, InfRoots), solution_ctor(&sol, 0, 0, ZeroRoots),
+                              solution_ctor(&sol, 0, 0, OneRoots), solution_ctor(&sol, 0, 0, OneRoots),
+                              solution_ctor(&sol, -2, 2, TwoRoots), solution_ctor(&sol, -2, 0, TwoRoots),
+                              solution_ctor(&sol, 2, 2, OneRoots), solution_ctor(&sol, 0, 0, ZeroRoots),
+                              solution_ctor(&sol, -1, -1, OneRoots), solution_ctor(&sol, -1, -1, OneRoots)};
+    int error = 0;
     for(int i = 0; i < 10; ++i) {
-        RunTest(i + 1, tests[i], s_ok[i]);
+        error = runtest(i + 1, tests[i], s_ok[i]);
+        if (error)
+            break;
     }
+    if (! error)
+        printf("Testing completed successfully\n");
 }
 
 // ./program arg1 arg2
