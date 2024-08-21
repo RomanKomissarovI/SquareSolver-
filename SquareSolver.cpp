@@ -4,6 +4,8 @@
 #define NDEBUG
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
+
 //#define
 // #ifdef #if
 // macros?
@@ -19,10 +21,10 @@
 //void assert() {}.
 //define assert ;
 
-#if defined(MY_NDEBUG)
+#if !defined(MY_NDEBUG)
 #define my_assert(a) if (!(a)) { \
         printf("Error in %s\n line = %d\n", __FILE__, __LINE__);  \
-        printf("%s", 1);      \
+        exit(1);      \
      }
 #else
 #define my_assert(a)
@@ -76,7 +78,10 @@ void flush_input() {       // уничтожение символов до конца строки
 void read_console_eq(struct equation* Q) {
     assert(Q != nullptr);
     printf("Enter the a, b, c:\n");      // ReadCoeffsInteractive
-    scanf("%lf %lf %lf", &(Q->c.a), &(Q->c.b), &(Q->c.c));
+    if (scanf("%lf %lf %lf", &(Q->c.a), &(Q->c.b), &(Q->c.c)) != 3) {
+        printf("Error input data\n");
+        exit(1);
+    }
 }
 
 void read_file_eq(struct equation* Q) {
@@ -86,7 +91,10 @@ void read_file_eq(struct equation* Q) {
     scanf("%s", &s);
 
     FILE* f = fopen(s, "r");       // ReadCoeffsFile
-    fscanf(f, "%lf %lf %lf", &(Q->c.a), &(Q->c.b), &(Q->c.c));
+    if (fscanf(f, "%lf %lf %lf", &(Q->c.a), &(Q->c.b), &(Q->c.c)) != 3) {
+        printf("Error input data\n");
+        exit(1);
+    }
     fclose(f);
 }
 
@@ -126,29 +134,29 @@ bool IsZero(double x) {
     return fabs(x) <= EPS;
 }
 //
-RootsCount solve_squar_eq(struct coeffs c, struct solution* s) {// const struct coeffs* coeffs, struct solution* solution
+RootsCount solve_square_eq(struct coeffs* c, struct solution* s) {// const struct coeffs* coeffs, struct solution* solution
     assert(s != nullptr);
-    if (IsZero(c.a)){
-        if (IsZero(c.b)) {
-            return (fabs(c.c) <= EPS) ? InfRoots : ZeroRoots;
+    if (IsZero(c->a)){
+        if (IsZero(c->b)) {
+            return (IsZero(c->c)) ? InfRoots : ZeroRoots;
         }
-        s->x1 = s->x2 = -c.c / c.b;
+        s->x1 = s->x2 = -c->c / c->b;
         return OneRoots;
     }
 
-    double d = c.b * c.b - 4 * c.a * c.c;
+    double d = c->b * c->b - 4 * c->a * c->c;
+    if (IsZero(d)) {
+        s->x1 = s->x2 = -c->b / 2 / c->a; // d == 0
+        return OneRoots;
+    }
     if (d < 0){
         return ZeroRoots;
     }
     else{
         double sqr_discr = sqrt(d);
-        if (d > EPS){
-            s->x1 = (-c.b - sqr_discr) / 2 / c.a;
-            s->x2 = (-c.b + sqr_discr) / 2 / c.a;
-            return TwoRoots;
-        }
-        s->x1 = s->x2 = (-c.b - sqr_discr) / 2 / c.a; // d == 0
-        return OneRoots;
+        s->x1 = (-c->b - sqr_discr) / 2 / c->a;
+        s->x2 = (-c->b + sqr_discr) / 2 / c->a;
+        return TwoRoots;
     }
 }
 
@@ -175,19 +183,20 @@ void output(struct solution* s) {
         break;
     default:
         printf("SS_main() Error");
+        exit(1);
         break;
     }
 }
 
-int runtest(int nTest, struct coeffs c, struct solution s_ok) {
+int runtest(int nTest, struct coeffs* c, struct solution* s_ok) {
     struct solution s; //
     s.x1 = s.x2 = 0;
-    s.nroot = solve_squar_eq(c, &s);
-    if (s.nroot != s_ok.nroot || s.x1 != s_ok.x1 || s.x2 != s_ok.x2) {
+    s.nroot = solve_square_eq(c, &s);
+    if (s.nroot != s_ok->nroot || s.x1 != s_ok->x1 || s.x2 != s_ok->x2) {
         printf(" Error Test %d: a = %lg; b = %lg; c = %lg; nroots = %d; x1 = %lg; x2 = %lg\n"
                "Expected values: nroots = %d; x1 = %lg; x2 = %lg\n",
-               nTest, c.a, c.b, c.c, s.nroot, s.x1, s.x2,
-               s_ok.nroot, s_ok.x1, s_ok.x2);
+               nTest, c->a, c->b, c->c, s.nroot, s.x1, s.x2,
+               s_ok->nroot, s_ok->x1, s_ok->x2);
         return nTest;
     }
     return 0;
@@ -206,8 +215,8 @@ void total_testing() {
                               make_solution(-1, -1, OneRoots), make_solution(-1, -1, OneRoots)};
     int error = 0, num_of_tests = sizeof(tests) / sizeof(tests[0]);
     for(int i = 0; i < num_of_tests; ++i) {  // sizeof / size of elem
-        error = runtest(i + 1, tests[i], s_ok[i]);
-        if (error)
+        error = runtest(i + 1, &tests[i], &s_ok[i]);
+        if (error)    // TODO run all, count bad tests
             break;
     }
     if (!error)
@@ -215,7 +224,7 @@ void total_testing() {
 }
 
 // ./program arg1 arg2
-int main()
+int main(int argc, const char* argv[])
 {
     equation Q;
     printf("Square Solver\n");
@@ -233,11 +242,16 @@ int main()
             break;
         default:
             printf("Error mode\n");
+            return 1;
             break;
     }
 
+    //if (argc >= 2 && argv[1] == "--file") {
+    //
+    //}
+
     // Q is valid???
-    Q.s.nroot = solve_squar_eq(Q.c, &Q.s); //square
+    Q.s.nroot = solve_square_eq(&Q.c, &Q.s); //square
     output(&Q.s);
     return 0;
 }
