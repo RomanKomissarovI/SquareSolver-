@@ -1,9 +1,21 @@
 #include <stdio.h>
-#include "in-out.cpp"
+#include <string.h>
+#include <stdlib.h>
+#include "in_out.cpp"
 #include "solve_equation.cpp"
+#include "testing.cpp"
 
-void flush_input() {       // уничтожение символов до конца строки
-    char c = getchar();
+const int CMD_MODE = -999; // запрос из cmd
+// tests from file
+// argc argv --- аргументы командной строки
+// char buffer[] <--- input. sscanf(); Check Errors!
+// g++ in console. In Windows .bat files. internet
+// Doxygen
+
+void FlushInput() {       // уничтожение символов до конца строки
+    int c = getchar();
+
+    //EOF? char c = (char)getchar
     while (c != '\n' && c != EOF)
         c = getchar();
         printf("%c", c);
@@ -11,32 +23,42 @@ void flush_input() {       // уничтожение символов до конца строки
 
 int main(int argc, const char* argv[])
 {
-    equation eq;
-    printf("Square Solver\n");
-    printf("If you want to use file input, write 1. Else, write 0\n");
-    char mode = '0';
-    scanf("%c", &mode);
-
-    switch(mode) {
-        case '0':
-            read_console_eq(&eq);
-            break;
-        case '1':
-            flush_input();
-            read_file_eq(&eq);
-            break;
-        default:
-            printf("Error mode\n");
-            return 1;
-            break;
+    Equation equation;
+    if (argc >= 2) {
+        if (!strcmp(argv[1], "tests")) {
+            RunAllTests();
+        }
+        else if (!strcmp(argv[1], "--file")) {
+            Equation equation;
+            if (argc >= 4) {
+                TestFileEquation(argv[2], atoi(argv[3]));
+            }
+            else
+                printf("Error input data\n");
+        }
     }
+    else {
+        printf("Square Solver\n");
+        printf("If you want to use file input, write 1. Else, write 0\n");
+        char mode = '0';
+        scanf("%c", &mode);
 
-    //if (argc >= 2 && argv[1] == "--file") {
-    //
-    //}
+        switch(mode) {
+            case '0':
+                ReadConsoleEquation(&equation);
+                break;
+            case '1':
+                FlushInput();
+                ReadFileEquation(&equation);
+                break;
+            default:
+                printf("Error mode\n");
+                return 1;
+                break;
+        }
 
-    // Q is valid???
-    eq.s.nroot = solve_square_eq(&eq.c, &eq.s); //square
-    output(&eq.s);
+        equation.solution.nroot = SolveSquareEquation(&equation.coeffs, &equation.solution);
+        OutputSolution(&equation.solution);
+    }
     return 0;
 }

@@ -3,25 +3,25 @@
 
 #include <assert.h>
 
-struct coeffs {
+struct Coeffs {
     double a = 0;
     double b = 0;
     double c = 0;
 };
 
-void coeffs_ctor(coeffs* cf, double a, double b, double c) {
-    assert(cf != nullptr);
-    cf->a = a;
-    cf->b = b;
-    cf->c = c;
+void CoeffsCtor(Coeffs* coeffs, double a, double b, double c) {
+    assert(coeffs != nullptr);
+    coeffs->a = a;
+    coeffs->b = b;
+    coeffs->c = c;
 }
 
-struct coeffs make_coeffs(double a, double b, double c) {
-    struct coeffs cf;
-    cf.a = a;
-    cf.b = b;
-    cf.c = c;
-    return cf;
+Coeffs MakeCoeffs(double a, double b, double c) {
+    struct Coeffs coeffs;
+    coeffs.a = a;
+    coeffs.b = b;
+    coeffs.c = c;
+    return coeffs;
 }
 
 enum RootsCount {
@@ -29,33 +29,33 @@ enum RootsCount {
     OneRoots  = 1,
     TwoRoots  = 2,
     ZeroRoots = 0,
-    NOT_SOLVE = -999, // ещё не решали
+    NotSolve = -999, // ещё не решали    --> caps???
 };
 
-struct solution {
+struct Solution {
     double x1 = 0;
     double x2 = 0;
-    RootsCount nroot = NOT_SOLVE;
+    RootsCount nroot = NotSolve;
 };
 
-void solution_ctor(solution* sol, double x1, double x2, RootsCount nroots) {
-    assert(sol != nullptr);
-    sol->x1 = x1;
-    sol->x2 = x2;
-    sol->nroot = nroots;
+void SolutionCtor(Solution* solution, double x1, double x2, RootsCount nroots) {
+    assert(solution != nullptr);
+    solution->x1 = x1;
+    solution->x2 = x2;
+    solution->nroot = nroots;
 }
 
-struct solution make_solution(double x1, double x2, RootsCount nroots) {
-    struct solution sol;
-    sol.x1 = x1;
-    sol.x2 = x2;
-    sol.nroot = nroots;
-    return sol;
+Solution MakeSolution(double x1, double x2, RootsCount nroots) {
+    struct Solution solution;
+    solution.x1 = x1;
+    solution.x2 = x2;
+    solution.nroot = nroots;
+    return solution;
 }
 
-struct equation { // equation
-    struct coeffs c;
-    struct solution s;
+struct Equation { // equation
+    struct Coeffs coeffs; // Coeffs coeffs;         equation.coeffs.a = 2;
+    struct Solution solution;
 };
 
-#endif
+#endif // STRUCTS_OF_EQUATION_CPP

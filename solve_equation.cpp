@@ -11,20 +11,20 @@ bool IsZero(double x) {
     return fabs(x) <= EPS;
 }
 
-RootsCount solve_square_eq(struct coeffs* c, struct solution* s) {// const struct coeffs* coeffs, struct solution* solution
-    assert(s != nullptr);
-    assert(c != nullptr);
-    if (IsZero(c->a)){
-        if (IsZero(c->b)) {
-            return (IsZero(c->c)) ? InfRoots : ZeroRoots;
+RootsCount SolveSquareEquation(Coeffs* coeffs, Solution* solution) {
+    assert(solution != nullptr);
+    assert(coeffs != nullptr);
+    if (IsZero(coeffs->a)){
+        if (IsZero(coeffs->b)) {
+            return (IsZero(coeffs->c)) ? InfRoots : ZeroRoots;
         }
-        s->x1 = s->x2 = -c->c / c->b;
+        solution->x1 = solution->x2 = -coeffs->c / coeffs->b;
         return OneRoots;
     }
 
-    double d = c->b * c->b - 4 * c->a * c->c;
+    double d = coeffs->b * coeffs->b - 4 * coeffs->a * coeffs->c;
     if (IsZero(d)) {
-        s->x1 = s->x2 = -c->b / 2 / c->a; // d == 0
+        solution->x1 = solution->x2 = -coeffs->b / 2 / coeffs->a; // d == 0
         return OneRoots;
     }
     if (d < 0){
@@ -32,9 +32,9 @@ RootsCount solve_square_eq(struct coeffs* c, struct solution* s) {// const struc
     }
     else{
         double sqr_discr = sqrt(d);
-        s->x1 = (-c->b - sqr_discr) / 2 / c->a;
-        s->x2 = (-c->b + sqr_discr) / 2 / c->a;
+        solution->x1 = (-coeffs->b - sqr_discr) / 2 / coeffs->a;
+        solution->x2 = (-coeffs->b + sqr_discr) / 2 / coeffs->a;
         return TwoRoots;
     }
 }
-#endif
+#endif // SOLVE_EQUATION_CPP
