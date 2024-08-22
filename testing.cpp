@@ -44,19 +44,23 @@ void RunAllTests() {
         printf("Testing completed successfully\n");
 }
 
-void TestFileEquation(const char* path_file, int num_of_tests) {
+void TestFileEquation(const char* path_file) {
     assert(path_file != nullptr);
     Coeffs coeffs;
     Solution solution;
     FILE* f = fopen(path_file, "r");
     int i = 0;
-    for (i = 0; i < num_of_tests; ++i){
-        if (fscanf(f, "%lf %lf %lf %lf %lf %d", &coeffs.a, &coeffs.b, &coeffs.c, \
-                        &solution.x1, &solution.x2, &solution.nroot) != 6) {
-            printf("Error input data\n");
+    int eof = -1;
+    while (1) {
+        if ((eof = fscanf(f, "%lf %lf %lf %lf %lf %d", &coeffs.a, &coeffs.b, &coeffs.c, \
+                        &solution.x1, &solution.x2, &solution.nroot)) != 6) {
+            if (!eof)
+                printf("Error input data\n");
+            break;
         }
         if (!RunTest(i + 1, &coeffs, &solution))
             printf("OK\n");
+        ++i;
     }
     fclose(f);
 }

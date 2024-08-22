@@ -30,8 +30,8 @@ int main(int argc, const char* argv[])
         }
         else if (!strcmp(argv[1], "--file")) {
             Equation equation;
-            if (argc >= 4) {
-                TestFileEquation(argv[2], atoi(argv[3]));
+            if (argc >= 3) {
+                TestFileEquation(argv[2]);
             }
             else
                 printf("Error input data\n");
