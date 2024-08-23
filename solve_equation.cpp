@@ -1,9 +1,7 @@
-#ifndef SOLVE_EQUATION_CPP
-#define SOLVE_EQUATION_CPP
-
 #include <assert.h>
-#include "structs_of_equation.cpp"
 #include <math.h>
+
+#include "structs_of_equation.h"
 
 static const double EPS = 10e-5; // погрешность
 
@@ -14,10 +12,12 @@ bool IsZero(double x) {
 RootsCount SolveSquareEquation(Coeffs* coeffs, Solution* solution) {
     assert(solution != nullptr);
     assert(coeffs != nullptr);
+
     if (IsZero(coeffs->a)){
         if (IsZero(coeffs->b)) {
             return (IsZero(coeffs->c)) ? InfRoots : ZeroRoots;
         }
+
         solution->x1 = solution->x2 = -coeffs->c / coeffs->b;
         return OneRoots;
     }
@@ -27,6 +27,7 @@ RootsCount SolveSquareEquation(Coeffs* coeffs, Solution* solution) {
         solution->x1 = solution->x2 = -coeffs->b / 2 / coeffs->a; // d == 0
         return OneRoots;
     }
+
     if (d < 0){
         return ZeroRoots;
     }
@@ -34,7 +35,7 @@ RootsCount SolveSquareEquation(Coeffs* coeffs, Solution* solution) {
         double sqr_discr = sqrt(d);
         solution->x1 = (-coeffs->b - sqr_discr) / 2 / coeffs->a;
         solution->x2 = (-coeffs->b + sqr_discr) / 2 / coeffs->a;
+
         return TwoRoots;
     }
 }
-#endif // SOLVE_EQUATION_CPP

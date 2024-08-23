@@ -1,73 +1,73 @@
-#ifndef IN_OUT_CPP
-#define IN_OUT_CPP
-
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "structs_of_equation.cpp"
 
-static const int MAX_PATH_LEN = 257;
+#include "structs_of_equation.h"
 
-bool CheckCorrect(char s[]) {
-    bool point = false;
-    int i = 0;
-    for (i = 0; s[i] != '\0'; ++i) {
-        if (s[i] == '.') {
-            if (point == true || i == 0 || s[i + 1] == '\0') {
-                return false;
-            }
-            point = true;
-        }
-        else if (!isdigit(s[i])) {
-            return false;
-        }
+static const int MAX_INPUT_LEN = 151;
+
+void FlushInput() {       // уничтожение символов до конца строки
+    int c = getchar();
+
+    //EOF? char c = (char)getchar
+    while (c != '\n' && c != EOF)
+        c = getchar();
+}
+
+int GetLineFile(char s[], int max_len, FILE* f) {
+    int c, i;
+    c = fgetc(f);
+    for (i = 0; i < max_len && c != '\n' && c != EOF; ++i) {
+        s[i] = c;
+        c = fgetc(f);    // fgetc
     }
-    return true;
+    if (s[i] == '\n') {
+        s[i++] = c;
+    }
+    s[i] = '\0';
+    return i;
+}
+
+int GetLine(char s[], int max_len) {
+    return GetLineFile(s, max_len, stdin);
+}
+
+void ReadFileEquation(Equation* equation, FILE* f) {
+    assert(equation != nullptr);
+
+    bool is_error = false;
+
+    char s_coeffs[MAX_INPUT_LEN] = {0}; // Ограничение по длине строки
+    FlushInput();
+    GetLineFile(s_coeffs, MAX_INPUT_LEN - 1, f);
+
+    char* ptrEnd = nullptr;
+    equation->coeffs.a = strtod(s_coeffs, &ptrEnd);
+    if (*ptrEnd == '\0') {
+        is_error = true;
+    }
+
+    equation->coeffs.b = strtod(ptrEnd, &ptrEnd);
+    if (*ptrEnd == '\0') {
+        is_error = true;
+    }
+
+    equation->coeffs.c = strtod(ptrEnd, &ptrEnd);
+    if (*ptrEnd != '\0') {
+        is_error = true;
+    }
+
+    if (is_error)
+    {
+        printf("Error input string: %s\n", s_coeffs);
+    }
+
+    fclose(f);
 }
 
 void ReadConsoleEquation(Equation* equation) {
-    assert(equation != nullptr);
-    printf("Enter the a, b, c:\n");
-    char s_a[100] = {0};
-    char s_b[100] = {0};
-    char s_c[100] = {0};
-    if (scanf("%s %s %s", s_a, s_b, s_c) != 3) {
-        printf("Error input data\n");
-    }
-    else if (!CheckCorrect(s_a) || !CheckCorrect(s_b) || !CheckCorrect(s_c)) {
-        printf("Error input data\n");
-    }
-    else {
-        equation->coeffs.a = atof(s_a);
-        equation->coeffs.b = atof(s_b);
-        equation->coeffs.c = atof(s_c);
-    }
-}
-
-void ReadFileEquation(Equation* equation) {
-    assert(equation != nullptr);
-    printf("Write the path to the file (or it`s name, if the file in the directory of the programm)\n");
-    char s[MAX_PATH_LEN] = {0};
-    scanf("%s", s);
-
-    FILE* f = fopen(s, "r");
-
-    char s_a[100] = {0};
-    char s_b[100] = {0};
-    char s_c[100] = {0};
-    if (fscanf(f, "%s %s %s", s_a, s_b, s_c) != 3) {
-        printf("Error input data\n");
-    }
-    else if (!CheckCorrect(s_a) || !CheckCorrect(s_b) || !CheckCorrect(s_c)) {
-        printf("Error input data\n");
-    }
-    else {
-        equation->coeffs.a = atof(s_a);
-        equation->coeffs.b = atof(s_b);
-        equation->coeffs.c = atof(s_c);
-    }
-    fclose(f);
+    ReadFileEquation(equation, stdin);
 }
 
 void OutputSolution(Solution* solution) {
@@ -92,4 +92,3 @@ void OutputSolution(Solution* solution) {
         break;
     }
 }
-#endif // IN_OUT_CPP

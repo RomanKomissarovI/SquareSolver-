@@ -1,4 +1,6 @@
-#include <assert.h>
+#ifndef STRUCTS_OF_EQUATION_h
+#define STRUCTS_OF_EQUATION_h
+
 
 struct Coeffs {
     double a = 0;
@@ -24,3 +26,4 @@ struct Equation {
     struct Coeffs coeffs;
     struct Solution solution;
 };
+#endif // STRUCTS_OF_EQUATION_h
