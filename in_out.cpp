@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "structs_of_equation.h"
+//#include "solve_equation.h"
 
 static const int MAX_INPUT_LEN = 151;
 
@@ -20,7 +21,7 @@ int GetLineFile(char s[], int max_len, FILE* f) {
     c = fgetc(f);
     for (i = 0; i < max_len && c != '\n' && c != EOF; ++i) {
         s[i] = c;
-        c = fgetc(f);    // fgetc
+        c = fgetc(f);
     }
     if (s[i] == '\n') {
         s[i++] = c;
@@ -33,7 +34,7 @@ int GetLine(char s[], int max_len) {
     return GetLineFile(s, max_len, stdin);
 }
 
-void ReadFileEquation(Equation* equation, FILE* f) {
+bool ReadFileEquation(Equation* equation, FILE* f) {
     assert(equation != nullptr);
 
     bool is_error = false;
@@ -64,10 +65,11 @@ void ReadFileEquation(Equation* equation, FILE* f) {
     }
 
     fclose(f);
+    return is_error;
 }
 
-void ReadConsoleEquation(Equation* equation) {
-    ReadFileEquation(equation, stdin);
+bool ReadConsoleEquation(Equation* equation) {
+    return ReadFileEquation(equation, stdin);
 }
 
 void OutputSolution(Solution* solution) {
@@ -92,3 +94,4 @@ void OutputSolution(Solution* solution) {
         break;
     }
 }
+

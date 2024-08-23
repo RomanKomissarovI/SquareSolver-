@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "structs_of_equation.h"
+//#include "structs_of_equation.h"
 #include "equation_structs_make.h"
 #include "solve_equation.h"
 
