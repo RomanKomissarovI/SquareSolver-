@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "in_out.cpp"
 #include "solve_equation.cpp"
 #include "testing.cpp"

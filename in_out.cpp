@@ -1,18 +1,47 @@
 #ifndef IN_OUT_CPP
 #define IN_OUT_CPP
 
+#include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include "structs_of_equation.cpp"
 
 static const int MAX_PATH_LEN = 257;
 
+bool CheckCorrect(char s[]) {
+    bool point = false;
+    int i = 0;
+    for (i = 0; s[i] != '\0'; ++i) {
+        if (s[i] == '.') {
+            if (point == true || i == 0 || s[i + 1] == '\0') {
+                return false;
+            }
+            point = true;
+        }
+        else if (!isdigit(s[i])) {
+            return false;
+        }
+    }
+    return true;
+}
 
 void ReadConsoleEquation(Equation* equation) {
     assert(equation != nullptr);
     printf("Enter the a, b, c:\n");
-    if (scanf("%lf %lf %lf", &(equation->coeffs.a), &(equation->coeffs.b), &(equation->coeffs.c)) != 3) {
+    char s_a[100] = {0};
+    char s_b[100] = {0};
+    char s_c[100] = {0};
+    if (scanf("%s %s %s", s_a, s_b, s_c) != 3) {
         printf("Error input data\n");
+    }
+    else if (!CheckCorrect(s_a) || !CheckCorrect(s_b) || !CheckCorrect(s_c)) {
+        printf("Error input data\n");
+    }
+    else {
+        equation->coeffs.a = atof(s_a);
+        equation->coeffs.b = atof(s_b);
+        equation->coeffs.c = atof(s_c);
     }
 }
 
@@ -23,8 +52,20 @@ void ReadFileEquation(Equation* equation) {
     scanf("%s", s);
 
     FILE* f = fopen(s, "r");
-    if (fscanf(f, "%lf %lf %lf", &(equation->coeffs.a), &(equation->coeffs.b), &(equation->coeffs.c)) != 3) {
+
+    char s_a[100] = {0};
+    char s_b[100] = {0};
+    char s_c[100] = {0};
+    if (fscanf(f, "%s %s %s", s_a, s_b, s_c) != 3) {
         printf("Error input data\n");
+    }
+    else if (!CheckCorrect(s_a) || !CheckCorrect(s_b) || !CheckCorrect(s_c)) {
+        printf("Error input data\n");
+    }
+    else {
+        equation->coeffs.a = atof(s_a);
+        equation->coeffs.b = atof(s_b);
+        equation->coeffs.c = atof(s_c);
     }
     fclose(f);
 }
