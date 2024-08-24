@@ -1,0 +1,6 @@
+html/
+.git-auto/
+*.save
+*.o
+*.exe
+doxygen*.config
