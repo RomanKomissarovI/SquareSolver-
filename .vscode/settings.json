@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\User\\Documents\\C MFTI\\SquareSolver",
+            "binaryPath": "c:\\Users\\User\\Documents\\C MFTI\\SquareSolver\\main.exe",
+            "binaryArgs": []
+        }
+    ]
+}
