@@ -1,12 +1,33 @@
+/**
+  \file
+*/
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
 #include "structs_of_equation.h"
-//#include "solve_equation.h"
+#include "solve_equation.h"
 
 static const int MAX_INPUT_LEN = 151;
+
+/**
+    \brief Read a string from file
+    \param[out] s The input string
+    \param[in] max_len Max len of the input string
+    \param[in] f Name of file
+    \return Len of the string
+*/
+static int GetLineFile(char s[], int max_len, FILE* f);
+
+/**
+    \brief Read a string from stdin
+    \param[out] s The input string
+    \param[in] max_len Max len of the input string
+    \return Len of the string
+*/
+static int GetLine(char s[], int max_len);
 
 void FlushInput() {       // уничтожение символов до конца строки
     int c = getchar();
@@ -16,7 +37,7 @@ void FlushInput() {       // уничтожение символов до конца строки
         c = getchar();
 }
 
-int GetLineFile(char s[], int max_len, FILE* f) {
+static int GetLineFile(char s[], int max_len, FILE* f) {
     int c, i;
     c = fgetc(f);
     for (i = 0; i < max_len && c != '\n' && c != EOF; ++i) {
@@ -69,6 +90,7 @@ bool ReadFileEquation(Equation* equation, FILE* f) {
 }
 
 bool ReadConsoleEquation(Equation* equation) {
+    printf("Enter the a, b, c:\n");
     return ReadFileEquation(equation, stdin);
 }
 
@@ -95,3 +117,7 @@ void OutputSolution(Solution* solution) {
     }
 }
 
+void SolveAndOut(Equation* equation) {
+    equation->solution.nroot = SolveSquareEquation(&equation->coeffs, &equation->solution);
+    OutputSolution(&equation->solution);
+}

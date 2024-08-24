@@ -15,12 +15,6 @@ const int CMD_MODE = -999; // запрос из cmd
 // g++ in console. In Windows .bat files. internet
 // Doxygen
 // Readme internet
-/*!
-	\brief Родительский класс, не несущий никакой смысловой нагрузки
-
-	Данный класс имеет только одну простую цель: проиллюстрировать то,
-	как Doxygen документирует наследование
-*/
 
 int main(int argc, const char* argv[])
 {
@@ -49,7 +43,9 @@ int main(int argc, const char* argv[])
 
         switch(mode) {
             case '0':
-                ReadConsoleEquation(&equation);
+                if (!ReadConsoleEquation(&equation)) {
+                    SolveAndOut(&equation);
+                }
                 break;
             case '1':
             {
@@ -61,7 +57,9 @@ int main(int argc, const char* argv[])
                 FILE* f = fopen(s, "r");
 
                 FlushInput();
-                ReadFileEquation(&equation, f);
+                if (!ReadFileEquation(&equation, f)) {
+                    SolveAndOut(&equation);
+                }
                 break;
             }
             default:
@@ -69,9 +67,6 @@ int main(int argc, const char* argv[])
                 return 1;
                 break;
         }
-
-        equation.solution.nroot = SolveSquareEquation(&equation.coeffs, &equation.solution);
-        OutputSolution(&equation.solution);
     }
 
     return 0;
