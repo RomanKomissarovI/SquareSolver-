@@ -31,7 +31,7 @@ int main(int argc, const char* argv[])
                 TestFileEquation(argv[2]);
             }
             else {
-                ColorPrint(RedColor, "Error input data\n");
+                printf("Error input data\n");
             }
         }
     }
@@ -59,7 +59,7 @@ int main(int argc, const char* argv[])
                 FILE* f = fopen(s, "r");
 
                 if (f == nullptr) {
-                    ColorPrint(RedColor, "Error file name\n");
+                    perror("\033[3;31m Error file name\033[0m");
                     break;
                 }
 
@@ -69,7 +69,7 @@ int main(int argc, const char* argv[])
                 break;
             }
             default:
-                ColorPrint(RedColor, "Error mode\n");
+                printf("\033[3;31m Error mode\n\033[0m");
                 return 1;
                 break;
         }

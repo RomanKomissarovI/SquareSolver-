@@ -5,11 +5,9 @@
 #include "equation_structs_make.h"
 #include "solve_equation.h"
 #include "testing.h"
-#include "color_print.h"
 
-static const char ANSI_COLOR_GREEN[] = "\033[3;32m";
-static const char ANSI_COLOR_RED[] = "\033[3;31m";
-static const char ANSI_COLOR_RESET[] = "\033[0m";
+static const ANSI_COLOR_GREEN = "\033[3;32m"
+
 
 static int RunTest(int nTest, Coeffs* coeffs, Solution* solution_ok);
 
@@ -25,8 +23,8 @@ static int RunTest(int nTest, Coeffs* coeffs, Solution* solution_ok) {
         || !IsZero(solution.x1 - solution_ok->x1)
         || !IsZero(solution.x2 - solution_ok->x2)) {
 
-        ColorPrint(RedColor, "Error Test %d: a = %lg; b = %lg; c = %lg; nroots = %d; x1 = %lg; x2 = %lg\n"
-               "Expected values: nroots = %d; x1 = %lg; x2 = %lg\n",
+        printf("\033[3;31m Error Test %d: a = %lg; b = %lg; c = %lg; nroots = %d; x1 = %lg; x2 = %lg\n"
+               "Expected values: nroots = %d; x1 = %lg; x2 = %lg\n\033[0m",
                nTest, coeffs->a, coeffs->b, coeffs->c, solution.nroot, solution.x1, solution.x2,
                solution_ok->nroot, solution_ok->x1, solution_ok->x2);
 
@@ -59,9 +57,9 @@ void RunAllTests() {
     }
 
     if (!error)
-        ColorPrint(GreenColor, "Testing completed successfully\n");  // const ANSI_COLOR_GREEN
+        printf("\033[3;32m Testing completed successfully\n\033[0m");  // const ANSI_COLOR_GREEN
                                                                         // ANSI_COLOR_RESET
-
+                                                                        
     // ColorPrintf(ANSI_COLOR_RED, "Hello %d\n", 123);
     // va_args va_list variadic arguments
     // vprintf ...
@@ -75,27 +73,21 @@ void TestFileEquation(const char* path_file) {
     Solution solution;
 
     FILE* f = fopen(path_file, "r");
-    //printf("1312\n");
 
     int i = 0;
     int eof = 0; // -1????
-    while (true) {  // while (true) for ( ;; ) for()????
+    while (1) {  // while (true) for ( ;; ) for()????
         int nroot = 0;
-        //printf("1312qqq\n");
-
         if ((eof = fscanf(f, "%lf %lf %lf %lf %lf %d", &coeffs.a, &coeffs.b, &coeffs.c,
                           &solution.x1, &solution.x2, &nroot)) != 6) {
-            //printf("1312qqq\n");
             if (!eof)
-                printf("1312qqq\n");
-                ColorPrint(RedColor, "Error input dataaaaaaaaaaaa\n");
+                printf("\033[3;31m Error input data\n\033[0m");
             break;
         }
         solution.nroot = (RootsCount)nroot;
-        //printf("1312\n");
 
         if (!RunTest(i + 1, &coeffs, &solution))
-            ColorPrint(GreenColor, "OK\n");
+            printf("\033[3;32m OK\n\033[0m");
         ++i;
     }
 
