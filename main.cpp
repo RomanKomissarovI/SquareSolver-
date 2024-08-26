@@ -53,13 +53,18 @@ int main(int argc, const char* argv[])
                 ColorPrint(GreenColor, "Write the path to the file (or it`s name, if the file in the directory of the programm)\n");
 
                 char s[MAX_PATH_LEN] = {0};
-                FlushInput();
                 fgets(s, MAX_PATH_LEN, stdin); // TODO check error
 
-                FILE* f = fopen(s, "r");
+                int i = 0;
+                while (s[i] != '\n') {
+                    ++i;
+                }
+                s[i] = '\0';
+
+                FILE* f = fopen("input.txt", "r");
 
                 if (f == nullptr) {
-                    ColorPrint(RedColor, "Error file name\n");
+                    ColorPrint(RedColor, "Error file nameeee\n");
                     break;
                 }
 

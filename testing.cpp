@@ -75,24 +75,19 @@ void TestFileEquation(const char* path_file) {
     Solution solution;
 
     FILE* f = fopen(path_file, "r");
-    //printf("1312\n");
 
     int i = 0;
     int eof = 0; // -1????
     while (true) {  // while (true) for ( ;; ) for()????
         int nroot = 0;
-        //printf("1312qqq\n");
 
         if ((eof = fscanf(f, "%lf %lf %lf %lf %lf %d", &coeffs.a, &coeffs.b, &coeffs.c,
                           &solution.x1, &solution.x2, &nroot)) != 6) {
-            //printf("1312qqq\n");
             if (!eof)
-                printf("1312qqq\n");
                 ColorPrint(RedColor, "Error input dataaaaaaaaaaaa\n");
             break;
         }
         solution.nroot = (RootsCount)nroot;
-        //printf("1312\n");
 
         if (!RunTest(i + 1, &coeffs, &solution))
             ColorPrint(GreenColor, "OK\n");
