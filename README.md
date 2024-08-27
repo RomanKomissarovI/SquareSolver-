@@ -1,12 +1,22 @@
 # Square Solver	
-## This is Square Solver - the program, which can solve quadratic equations.
-## This program will be very useful for you, if you`re in seventh grade and don`t know what mathematics is.
-### How use the program?
+This is Square Solver - the command line program, which can solve quadratic equations.
+This program will be very useful for you, if you're in seventh grade and don't know what mathematics is.
+### How to install the program?
 1. Install the project zip-file
 ![](/zipss.png)
 2.	Unzip downloaded file.
-3.	Go to command line. For this in folder Square Solver enter cmd. 
-![](/cmdss.png)
-4.	Type make and press Enter. 
-![](/makess.png)
-5.	Find the main.exe file and open it. Then follow the instructions.
+3.	Go to Windows Terminal. For this enter in search 'Windows Terminal' and open this. 
+![](/winter.png)
+4.	Type cd and path to directory with program in quotes and press Enter. 
+![](/opdir.png)
+5.  Type .\compile.bat
+![](/comp.png)
+6.	Now you can type .\main.exe and follow the instructions.
+![](/mainst.png)
+### Examples
+![](/ex.png)
+### Tests
+Also this programm have tests. If you want to use built-in tests, print `.\main.exe tests`. If you want to check the program with your tests, you shold make a txt-file with 6 numbers in each string of the format: a b c first_root second_root number_of_roots. If the equation has no solutions, x1 = x2 = 0, if only one - x1 = x2 = x. Then, type `.\main.exe --file s`, where s - path to the file with tests.
+![](/test.png)
+### Authors
+Roman Komissarov
