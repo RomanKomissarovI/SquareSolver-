@@ -36,7 +36,7 @@ int main(int argc, const char* argv[])
         }
     }
     else {
-        ColorPrint(GreenColor, "Square Solver\n");
+        ColorPrint(GreenColor, "Square Solver %d %d\n");
         ColorPrint(GreenColor, "If you want to use file input, write 1. Else, write 0\n");
 
         char mode = '0';

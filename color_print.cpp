@@ -2,7 +2,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-void ColorPrint(const char color[], char* format, ...)
+
+
+void ColorPrint(const char color[], const char* format, ...)
 {
     va_list arguments;
     printf("%s", color);
